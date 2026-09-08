@@ -1,0 +1,36 @@
+# Environments & Credentials
+.env
+.env.local
+.env.*.local
+*.log
+
+# Python (Backend, Agents, Vision)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node / Next.js (Frontend)
+node_modules/
+.next/
+out/
+build/
+.pnpm-debug.log
+
+# AI/ML Models & Weights (Vision / YOLOv8)
+*.pt
+*.onnx
+*.engine
+models/*.pt
+models/*.onnx
+runs/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
