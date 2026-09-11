@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 import joblib
 import pandas as pd
+from pathlib import Path
 
 
 # Create the FastAPI application
@@ -10,7 +11,8 @@ app = FastAPI()
 
 # Load the trained pipeline ONCE, when the server starts
 # The pipeline contains both preprocessing and the ML model
-model = joblib.load("attendance_prediction/attendance_model.pkl")
+MODEL_PATH = Path(__file__).parent / "attendance_prediction" / "attendance_model.pkl"
+model = joblib.load(MODEL_PATH)
 
 
 # Defines the exact shape of data our API expects
@@ -50,7 +52,7 @@ def predict_attendance(event: EventInput):
     predicted_attendance = round(float(prediction[0]), 1)
 
 
-    # Calculate expected percentage of capacity
+    # Calculate expected percentage of venue capacity
     capacity_utilization = round(
         (predicted_attendance / event.venue_capacity) * 100,
         1
