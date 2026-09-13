@@ -1,0 +1,11 @@
+event_type,venue_type,staff_required
+wedding,hotel,15
+wedding,beach,12
+conference,hall,8
+conference,hotel,10
+concert,stadium,45
+concert,hall,25
+birthday,restaurant,4
+birthday,backyard,2
+corporate,hall,12
+corporate,hotel,14

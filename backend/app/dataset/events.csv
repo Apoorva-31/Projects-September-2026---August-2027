@@ -1,0 +1,6 @@
+event_type,attendees,duration,budget,venue_type,food_preference,staff_required,security_required,food_quantity,estimated_cost
+Conference,100,1,100000,Hotel,Vegetarian,12,3,110,75000
+Conference,250,1,250000,Hotel,Vegetarian,20,5,275,190000
+Wedding,500,1,600000,Banquet,Vegetarian,35,8,550,470000
+Birthday,80,1,50000,Hall,Vegetarian,8,2,90,38000
+Seminar,300,2,350000,Auditorium,Vegetarian,25,5,650,280000

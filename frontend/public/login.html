@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            background:url('https://i.pinimg.com/1200x/3a/b4/f3/3ab4f3dc694469e23b038f81690ecdd9.jpg') no-repeat 
+            center center/cover;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+        }
+
+        nav{
+            width:80%;
+            margin-top:20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .menu a{
+            color:white;
+            text-decoration:none;
+            margin:0 15px;
+            font-size:18px;
+        }
+
+        .search-box{
+            position:relative;
+        }
+
+        .search-box input{
+            width:220px;
+            padding:10px 35px 10px 15px;
+            border:1px solid rgba(255,255,255,0.5);
+            background:transparent;
+            color:white;
+            border-radius:5px;
+        }
+
+        .search-box input::placeholder { color: rgba(255,255,255,0.7); }
+
+        .search-box i{
+            position:absolute;
+            right:10px;
+            top:50%;
+            transform:translateY(-50%);
+            color:white;
+        }
+
+        .container{
+            width:900px;
+            height:500px;
+            margin-top:50px;
+            display:flex;
+            backdrop-filter:blur(15px);
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.2);
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .left-panel{
+            width:55%;
+            padding:80px 60px;
+            color:white;
+        }
+
+        .left-panel h1{ font-size:50px; }
+        .left-panel h2{ font-size:35px; margin-bottom:20px; }
+        .left-panel p{ margin-top:20px; line-height:1.6; }
+
+        .social-icons{ margin-top:30px; }
+        .social-icons i{ margin-right:20px; font-size:22px; cursor:pointer; }
+
+        .right-panel{
+            width:45%;
+            background:rgba(0,0,0,0.15);
+            backdrop-filter:blur(10px);
+            padding:60px 40px;
+            color:white;
+        }
+
+        .right-panel h1{ text-align:center; margin-bottom:40px; }
+
+        .input-box{ position:relative; margin-bottom:25px; }
+
+        .input-box input{
+            width:100%;
+            padding:12px;
+            border:none;
+            border-bottom:2px solid cyan;
+            background:transparent;
+            color:cyan;
+            outline:none;
+        }
+
+        .input-box input::placeholder { color: rgba(0,255,255,0.5); }
+
+        .input-box i{ position:absolute; right:10px; top:15px; }
+
+        .options{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:25px;
+            font-size:14px;
+        }
+
+        .options a{ color:white; text-decoration:none; }
+
+        button{
+            width:100%;
+            padding:14px;
+            border:none;
+            background:#d8004c;
+            color:white;
+            font-size:18px;
+            border-radius:5px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        button:hover{ background:#b60040; }
+
+        .signup{ text-align:center; margin-top:25px; }
+        .signup a{ color:white; font-weight:bold; text-decoration:none; }
+
+        .error-msg{
+            color:#ff4d4d;
+            font-size:13px;
+            text-align:center;
+            margin-bottom:10px;
+            display:none;
+        }
+
+        @media(max-width:900px){
+            .container{ width:95%; flex-direction:column; height:auto; }
+            .left-panel, .right-panel{ width:100%; }
+            nav{ width:95%; flex-direction:column; gap:15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="menu">
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="Search...">
+            <i class="fas fa-search"></i>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="left-panel">
+            <h1>Welcome!</h1>
+            <h2>To Our New Website.</h2>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae, asperiores.</p>
+            <div class="social-icons">
+                <i class="fab fa-linkedin-in"></i>
+                <i class="fab fa-facebook-f"></i>
+                <i class="fab fa-instagram"></i>
+                <i class="fab fa-twitter"></i>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <h1>Sign In</h1>
+
+            <p class="error-msg" id="errorMsg">⚠️ Please fill all fields!</p>
+
+            <div class="input-box">
+                <input type="email" placeholder="Email" id="email">
+                <i class="fas fa-envelope"></i>
+            </div>
+
+            <div class="input-box">
+                <input type="password" placeholder="Password" id="password">
+                <i class="fas fa-lock"></i>
+            </div>
+
+            <div class="options">
+                <label><input type="checkbox"> Remember me</label>
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            <button onclick="login()">Sign In</button>
+
+            <p class="signup">
+                Don't have an account? <a href="#">Sign up</a>
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        function login() {
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+            let errorMsg = document.getElementById("errorMsg");
+
+            
+            if(email === "" || password === "") {
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            errorMsg.style.display = "none";
+            
+            window.location.href = "dashboard.html";
+        }
+
+        
+        document.addEventListener("keydown", function(e) {
+            if(e.key === "Enter") login();
+        });
+    </script>
+
+</body>
+</html>

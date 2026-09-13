@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Event Management</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+                url('https://images.unsplash.com/photo-1653821355736-0c2598d0a63e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 860px;
+        }
+
+        /* ── Header ── */
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .header h1 .emoji {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+        }
+
+        .header p {
+            margin-top: 10px;
+            color: rgba(255,255,255,0.82);
+            font-size: 1.05rem;
+            letter-spacing: 0.2px;
+        }
+
+        /* ── Cards Row ── */
+        .cards {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.18);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 20px;
+            padding: 40px 36px 36px;
+            width: 260px;
+            color: #fff;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            cursor: default;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 18px;
+            display: block;
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.82);
+            line-height: 1.55;
+            margin-bottom: 28px;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-block;
+            padding: 11px 36px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease, transform 0.15s ease;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .btn:hover {
+            opacity: 0.88;
+            transform: scale(1.04);
+        }
+
+        .btn-formal {
+            background: #0b3615;
+        }
+
+        .btn-informal {
+            background: #4c1103;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            margin-top: 36px;
+            color: rgba(255,255,255,0.55);
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>
+            <span class="emoji">🎉</span>
+            AI Event Management
+        </h1>
+        <p>Select the type of event you want to organize.</p>
+    </div>
+
+    <div class="cards">
+
+        <!-- Formal Card -->
+        <div class="card">
+            <span class="card-icon">💼</span>
+            <h2>Formal Event</h2>
+            <p>Corporate Meetings, Conferences, Seminars, Office Functions and Business Events.</p>
+            <a href="formal.html" class="btn btn-formal">Open</a>
+        </div>
+
+        <!-- Informal Card -->
+        <div class="card">
+            <span class="card-icon">🥂</span>
+            <h2>Informal Event</h2>
+            <p>Birthday Parties, Wedding Functions, DJ Nights, Festivals and Family Celebrations.</p>
+            <a href="informal.html" class="btn btn-informal">Open</a>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>🎪</span>
+        <span>Powered by AI Event Planner</span>
+    </div>
+
+</div>
+
+</body>
+</html>
