@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Event Dashboard</title>
+    <style>
+        /* =========================================
+           GLOBAL STYLES (Easily Editable)
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* =========================================
+           DASHBOARD CONTAINER
+           ========================================= */
+        .dashboard {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        /* =========================================
+           HEADER (LIVE EVENT LOGO)
+           ========================================= */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #4cd137; /* Live green indicator */
+        }
+        
+        /* Pulsing dot animation for LIVE status */
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            background: #4cd137;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 209, 55, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 209, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 209, 55, 0); }
+        }
+
+        /* =========================================
+           SECTION & TITLES
+           ========================================= */
+        .section {
+            margin-bottom: 35px;
+            position: relative;
+        }
+        
+        /* Custom horizontal line with title in middle */
+        .section-title {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .section-title::before, .section-title::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .section-title::before { margin-right: 15px; }
+        .section-title::after { margin-left: 15px; }
+
+        /* =========================================
+           OCCUPANCY STATS
+           ========================================= */
+        .occupancy-grid {
+            display: flex;
+            justify-content: space-around;
+        }
+        .stat-col {
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        /* Risk indicator for Zone B */
+        .risk {
+            color: #ff4757; /* Red for danger/risk */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           REGISTERED STATS
+           ========================================= */
+        .registered-stat {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+        }
+        .registered-stat span {
+            font-size: 18px;
+            font-weight: 400;
+            color: #aaa;
+        }
+
+        /* =========================================
+           BUDGET STATS
+           ========================================= */
+        .budget-stat {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            color: #f1c40f; /* Gold for money */
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        
+        <!-- HEADER -->
+        <div class="header">
+            <h1><div class="live-dot"></div> LIVE EVENT</h1>
+        </div>
+
+        <!-- VENUE OCCUPANCY SECTION -->
+        <div class="section">
+            <div class="section-title">Venue Occupancy</div>
+            <div class="occupancy-grid">
+                <!-- Zone A -->
+                <div class="stat-col">
+                    <div class="stat-label">Zone A</div>
+                    <div class="stat-value" id="zoneA">65%</div>
+                </div>
+                <!-- Zone B -->
+                <div class="stat-col">
+                    <div class="stat-label">Zone B</div>
+                    <div class="stat-value" id="zoneB">82%</div>
+                    <div class="risk" id="riskBadgeB" style="display: none;">⚠️ RISK</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGISTERED SECTION -->
+        <div class="section">
+            <div class="section-title">Registered</div>
+            <div class="registered-stat" id="liveRegistered">
+                50 <span>/ 100 people</span>
+            </div>
+        </div>
+
+        <!-- BUDGET SECTION -->
+        <div class="section">
+            <div class="section-title">Budget Estimate</div>
+            <div class="budget-stat" id="liveBudget">
+                ₹ X X X X X
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT TO LOAD DATA FROM PREVIOUS PAGES & MAKE DASHBOARD 'LIVE' -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let attendeesStr = localStorage.getItem('eventAttendees');
+            let budgetStr = localStorage.getItem('eventBudget');
+
+            // Set initial data
+            let maxAttendees = attendeesStr ? parseInt(attendeesStr) : 100;
+            let currentAttendees = Math.floor(maxAttendees * 0.60); // Start at 60% arrived
+
+            let zoneA = 55;
+            let zoneB = 80;
+
+            const regEl = document.getElementById('liveRegistered');
+            const budgetEl = document.getElementById('liveBudget');
+            const zAEl = document.getElementById('zoneA');
+            const zBEl = document.getElementById('zoneB');
+            const riskB = document.getElementById('riskBadgeB');
+
+            // Show budget from previous pages if it exists
+            if (budgetStr) {
+                budgetEl.innerText = `₹ ${budgetStr}`;
+            }
+
+            // Function to update DOM
+            function updateDashboard() {
+                regEl.innerHTML = `${currentAttendees} <span>/ ${maxAttendees} people</span>`;
+                zAEl.innerText = `${zoneA}%`;
+                zBEl.innerText = `${zoneB}%`;
+
+                // Show risk warning if Zone B gets too crowded (> 85%)
+                if (zoneB > 85) {
+                    riskB.style.display = 'flex';
+                } else {
+                    riskB.style.display = 'none';
+                }
+            }
+
+            // Initial render
+            updateDashboard();
+
+            // Simulate 'Live' event activity (updates every 2.5 seconds)
+            setInterval(() => {
+                // People slowly arriving at the venue
+                if (currentAttendees < maxAttendees && Math.random() > 0.4) {
+                    currentAttendees += 1;
+                }
+                
+                // Venue zones fluctuating as people move around (+/- 2% changes)
+                zoneA = Math.max(0, Math.min(100, zoneA + Math.floor(Math.random() * 5) - 2));
+                zoneB = Math.max(0, Math.min(100, zoneB + Math.floor(Math.random() * 5) - 2));
+
+                updateDashboard();
+            }, 2500);
+        });
+    </script>
+</body>
+</html>

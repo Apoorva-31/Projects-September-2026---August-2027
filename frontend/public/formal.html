@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Detail</title>
+    <style>
+        /* =========================================
+           GLOBAL STYLES
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1170&auto=format&fit=crop') center/cover fixed;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 550px;
+            color: #fff;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* QUICK SELECT OPTIONS */
+        .quick-select h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-select {
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-select:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ACTIVE STATE FOR TILES */
+        .btn-select.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 25px 0;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .divider:not(:empty)::before { margin-right: 15px; }
+        .divider:not(:empty)::after { margin-left: 15px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .form-group.full-width { grid-column: span 2; }
+
+        .form-group label {
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+        .form-group input::placeholder { color: rgba(255, 255, 255, 0.4); }
+        .form-group input:focus { border-color: #fff; }
+
+        /* =========================================
+           ACTION BUTTONS (Continue & Plan with AI)
+           ========================================= */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 15px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+            display: block;
+        }
+
+        /* Standard Continue Button (Bypasses AI) */
+        .btn-continue {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .btn-continue:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        /* Plan with AI Button */
+        .btn-ai {
+            background: #ffffff;
+            color: #000;
+        }
+        .btn-ai:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Event Detail</h1>
+        
+        <div class="quick-select">
+            <h3>Select from an Event:</h3>
+            <div class="btn-group" id="quickSelectGroup">
+                <button type="button" class="btn-select">Seminar</button>
+                <button type="button" class="btn-select">Conference</button>
+                <button type="button" class="btn-select">Corporate Meet</button>
+                <button type="button" class="btn-select">Workshop</button>
+            </div>
+        </div>
+
+        <div class="divider">OR</div>
+
+        <form action="ai_planner.html" method="GET">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Event Name</label>
+                    <input type="text" placeholder="Enter event name...">
+                </div>
+                
+                <div class="form-group">
+                    <label>Event Type</label>
+                    <input type="text" id="eventTypeInput" placeholder="e.g. Tech Meetup">
+                </div>
+
+                <div class="form-group">
+                    <label>Attendees</label>
+                    <input type="number" id="attendeesInput" placeholder="Number of people">
+                </div>
+
+                <div class="form-group">
+                    <label>Date & Duration</label>
+                    <input type="text" placeholder="e.g. 24 Oct, 4 Hrs">
+                </div>
+
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" placeholder="City or Venue">
+                </div>
+
+                <div class="form-group">
+                    <label>Budget</label>
+                    <input type="text" id="budgetInput" placeholder="Total Budget (₹)">
+                </div>
+                
+                <div class="form-group">
+                    <label>Cater</label>
+                    <input type="text" placeholder="Food prefs (Veg/Non-veg)">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Staff</label>
+                    <input type="text" placeholder="Volunteers, Security, etc.">
+                </div>
+            </div>
+
+            <!-- BUTTONS: User can choose to bypass AI or use AI -->
+            <div class="action-buttons">
+                <!-- Links directly to Live Event (no AI) -->
+                <a href="live_event.html" class="btn-action btn-continue">Continue</a>
+                <!-- Submits form to AI Planner -->
+                <button type="submit" class="btn-action btn-ai">✨ Plan with AI</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- JAVASCRIPT TO MAKE TILES WORK & SAVE DATA -->
+    <script>
+        // 1. Tile Selection Logic
+        const buttons = document.querySelectorAll('#quickSelectGroup .btn-select');
+        const eventTypeInput = document.getElementById('eventTypeInput');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                if (eventTypeInput) {
+                    eventTypeInput.value = button.innerText;
+                    eventTypeInput.style.borderColor = '#4cd137';
+                    setTimeout(() => {
+                        eventTypeInput.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    }, 1000);
+                }
+            });
+        });
+
+        // 2. Save Data to localStorage on Continue or Plan with AI
+        function saveEventData() {
+            const attendees = document.getElementById('attendeesInput').value;
+            const budget = document.getElementById('budgetInput').value;
+            
+            if(attendees) localStorage.setItem('eventAttendees', attendees);
+            if(budget) localStorage.setItem('eventBudget', budget);
+        }
+
+        document.querySelector('.btn-continue').addEventListener('click', saveEventData);
+        document.querySelector('.btn-ai').addEventListener('click', saveEventData);
+    </script>
+</body>
+</html>

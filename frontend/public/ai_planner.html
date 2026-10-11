@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI - Planner</title>
+    <style>
+        /* =========================================
+           GLOBAL STYLES
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1170&auto=format&fit=crop') center/cover fixed;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .btn-live {
+            background: #ff4757;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-live:hover { background: #ff6b81; }
+
+        .section { margin-bottom: 30px; }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        /* SELECTABLE TILES */
+        .box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .box:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .box.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #fff;
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+
+        /* WIDE BOXES (Now Editable) */
+        .box-wide {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        /* Make contenteditable look like inputs when focused */
+        .box-wide[contenteditable="true"] {
+            cursor: text;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .box-wide[contenteditable="true"]:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .box-wide[contenteditable="true"]:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+
+        .risk-box { border-left: 4px solid #ff4757; }
+        .insight-box { border-left: 4px solid #2ed573; }
+
+        /* CONTINUE BUTTON */
+        .btn-continue-large {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: #4cd137;
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.2s ease;
+            margin-bottom: 20px;
+        }
+        .btn-continue-large:hover {
+            background: #44bd32;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(76, 209, 55, 0.3);
+        }
+
+        /* BOTTOM CHAT INPUT */
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            font-size: 15px;
+            outline: none;
+        }
+        .chat-input button {
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            background: #000;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-input button:hover { background: #333; }
+
+        /* LOCATION INPUT */
+        .location-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .location-search input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+        .location-search button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            background: #ff4757;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .location-search button:hover { background: #ff6b81; }
+
+        /* REAL VENUE CARDS */
+        .venue-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .venue-cards::-webkit-scrollbar {
+            width: 8px;
+        }
+        .venue-cards::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .venue-cards::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+        .venue-cards::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+        .venue-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .venue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        .venue-card.active {
+            border: 2px solid #2ed573;
+            box-shadow: 0 0 15px rgba(46, 213, 115, 0.4);
+        }
+        .venue-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        .venue-info {
+            padding: 12px;
+        }
+        .venue-name {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .venue-rating {
+            font-size: 12px;
+            color: #f1c40f;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .venue-details {
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 8px;
+        }
+        .venue-availability {
+            font-size: 11px;
+            font-weight: 600;
+            color: #2ed573;
+        }
+        .loading-text {
+            text-align: center;
+            padding: 20px;
+            font-size: 15px;
+            color: rgba(255,255,255,0.8);
+            font-style: italic;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            AI - Planner
+            <a href="live_event.html" class="btn-live">Go to Live Event 🔴</a>
+        </h1>
+
+        <!-- VENUE SECTION -->
+        <div class="section">
+            <div class="section-title">Venue Options</div>
+            
+            <div class="location-search">
+                <input type="text" id="cityInput" placeholder="Enter city name (e.g. Mumbai, Delhi, New York)...">
+                <button id="searchCityBtn">Find Venues</button>
+            </div>
+            
+            <div id="venueContainer" class="venue-cards">
+                <!-- Default placeholders before search -->
+                <div class="venue-card active">
+                    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=500&h=300&fit=crop" class="venue-img" alt="Hotel Taj">
+                    <div class="venue-info">
+                        <div class="venue-name">Hotel Taj</div>
+                        <div class="venue-rating">⭐ 4.9 (2,145 reviews)</div>
+                        <div class="venue-details">Luxury Hotel • 500 Capacity</div>
+                        <div class="venue-availability">Available for selected dates</div>
+                    </div>
+                </div>
+                <div class="venue-card">
+                    <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=500&h=300&fit=crop" class="venue-img" alt="Community Hall">
+                    <div class="venue-info">
+                        <div class="venue-name">Community Hall</div>
+                        <div class="venue-rating">⭐ 4.2 (340 reviews)</div>
+                        <div class="venue-details">Multipurpose • 200 Capacity</div>
+                        <div class="venue-availability">Available</div>
+                    </div>
+                </div>
+                <div class="venue-card">
+                    <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=500&h=300&fit=crop" class="venue-img" alt="Open Grounds">
+                    <div class="venue-info">
+                        <div class="venue-name">Open Grounds</div>
+                        <div class="venue-rating">⭐ 4.5 (890 reviews)</div>
+                        <div class="venue-details">Outdoor • 1000+ Capacity</div>
+                        <div class="venue-availability">Available</div>
+                    </div>
+                </div>
+                <div class="venue-card">
+                    <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=500&h=300&fit=crop" class="venue-img" alt="Banquet">
+                    <div class="venue-info">
+                        <div class="venue-name">Royal Banquet</div>
+                        <div class="venue-rating">⭐ 4.7 (1,200 reviews)</div>
+                        <div class="venue-details">Indoor • 300 Capacity</div>
+                        <div class="venue-availability">Available</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAFF SECTION (Editable) -->
+        <div class="section">
+            <div class="section-title">Staff</div>
+            <div class="box-wide" contenteditable="true">
+                Required: 2 Managers, 5 Volunteers, 3 Security personnel based on estimated attendees.
+            </div>
+        </div>
+
+        <!-- CATERING SECTION -->
+        <div class="section">
+            <div class="section-title">Catering Options</div>
+            <div class="grid-4 cater-group">
+                <div class="box active">Standard Veg</div>
+                <div class="box">Premium Veg</div>
+                <div class="box">Mix Menu</div>
+                <div class="box">Snacks Only</div>
+            </div>
+        </div>
+
+        <!-- BUDGET SECTION (Editable) -->
+        <div class="section">
+            <div class="section-title">Budget Estimate</div>
+            <div class="box-wide" id="aiBudgetBox" contenteditable="true">
+                <strong>₹ 1,50,000</strong> - Optimized based on the selected Venue and Catering requirements.
+            </div>
+        </div>
+
+        <!-- RISK SECTION (Editable) -->
+        <div class="section">
+            <div class="section-title">Risk Assessment</div>
+            <div class="box-wide risk-box" contenteditable="true">
+                High probability of rain on selected dates. Recommend indoor venue or tent setup. Backup generator required.
+            </div>
+        </div>
+
+        <!-- AI INSIGHT SECTION (Editable) -->
+        <div class="section" style="margin-bottom: 20px;">
+            <div class="section-title">AI Insight</div>
+            <div class="box-wide insight-box" contenteditable="true">
+                Scheduling the event at 10:00 AM avoids local traffic congestion, ensuring maximum and timely attendance.
+            </div>
+        </div>
+
+        <!-- CONTINUE BUTTON -->
+        <a href="live_event.html" class="btn-continue-large">Continue to Live Event ➔</a>
+
+        <!-- ASK QUESTIONS INPUT -->
+        <div class="chat-input">
+            <input type="text" placeholder="Ask AI to modify or tweak the plan...">
+            <button>Ask</button>
+        </div>
+    </div>
+
+    <!-- GOOGLE MAPS API (Requires your API Key) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
+
+    <!-- JAVASCRIPT TO MAKE TILES WORK -->
+    <script>
+        // Handle Venue Selection for dynamic cards
+        function attachVenueClickListeners() {
+            const venueCards = document.querySelectorAll('.venue-card');
+            venueCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    venueCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                });
+            });
+        }
+        
+        attachVenueClickListeners();
+
+        // Location Search Mock
+        // Google Maps Places API Integration
+        const searchCityBtn = document.getElementById('searchCityBtn');
+        const cityInput = document.getElementById('cityInput');
+        const venueContainer = document.getElementById('venueContainer');
+        const fallbackImg = "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=500&h=300&fit=crop";
+
+        searchCityBtn.addEventListener('click', () => {
+            const city = cityInput.value.trim();
+            if (!city) {
+                alert("Please enter a city name.");
+                return;
+            }
+            
+            venueContainer.style.display = 'block';
+            venueContainer.innerHTML = `<div class="loading-text">Fetching real hotels in ${city} from Google Maps...</div>`;
+
+            // Check if Google Maps API is loaded
+            if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+                venueContainer.innerHTML = `<div class="loading-text" style="color: #ff4757;">
+                    <strong>Google Maps API Key Required!</strong><br><br>
+                    To fetch real hotels, photos, and ratings, you need to insert your Google Maps API Key.<br>
+                    Open <code>ai_planner.html</code> and replace <code>YOUR_GOOGLE_MAPS_API_KEY</code> with your actual key in the script tag at the bottom.
+                </div>`;
+                return;
+            }
+
+            // Create a hidden div to initialize the PlacesService
+            const hiddenDiv = document.createElement('div');
+            const map = new google.maps.Map(hiddenDiv);
+            const service = new google.maps.places.PlacesService(map);
+
+            const request = {
+                query: `hotels in ${city}`,
+                type: 'lodging'
+            };
+
+            // Call the Google Maps TextSearch API
+            service.textSearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+                    
+                    // Filter hotels that have a rating of 3.5 or higher
+                    let filteredHotels = results.filter(place => place.rating && place.rating >= 3.5);
+                    
+                    // Sort the hotels by rating in descending order (highest first)
+                    filteredHotels.sort((a, b) => b.rating - a.rating);
+
+                    if (filteredHotels.length === 0) {
+                        venueContainer.innerHTML = `<div class="loading-text">No real hotels found with 3.5+ rating in ${city}.</div>`;
+                        return;
+                    }
+
+                    // Render the HTML for the real venues
+                    venueContainer.style.display = 'grid';
+                    venueContainer.innerHTML = filteredHotels.map((place, index) => {
+                        // Extract photo if available, otherwise use fallback
+                        let photoUrl = fallbackImg;
+                        if (place.photos && place.photos.length > 0) {
+                            photoUrl = place.photos[0].getUrl({ maxWidth: 500, maxHeight: 300 });
+                        }
+                        
+                        const reviews = place.user_ratings_total || 0;
+                        const rating = place.rating;
+                        const name = place.name;
+                        const address = place.formatted_address || "Location unavailable";
+
+                        return `
+                            <div class="venue-card ${index === 0 ? 'active' : ''}">
+                                <img src="${photoUrl}" onerror="this.src='${fallbackImg}'" class="venue-img" alt="${name}">
+                                <div class="venue-info">
+                                    <div class="venue-name">${name}</div>
+                                    <div class="venue-rating">⭐ ${rating} (${reviews} reviews)</div>
+                                    <div class="venue-details" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${address}">
+                                        📍 ${address}
+                                    </div>
+                                    <div class="venue-availability">Google Maps Data</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    attachVenueClickListeners();
+                } else {
+                    venueContainer.innerHTML = `<div class="loading-text" style="color: #ff4757;">
+                        Error fetching data from Google Maps API. (Status: ${status})<br>
+                        Please check your API key, billing status, and API restrictions.
+                    </div>`;
+                }
+            });
+        });
+
+        // Handle Catering Selection
+        const caterBoxes = document.querySelectorAll('.cater-group .box');
+        caterBoxes.forEach(box => {
+            box.addEventListener('click', () => {
+                caterBoxes.forEach(b => b.classList.remove('active'));
+                box.classList.add('active');
+            });
+        });
+
+        // LocalStorage logic for syncing data
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedBudget = localStorage.getItem('eventBudget');
+            if(savedBudget) {
+                // If user entered budget in previous screen, update the AI box
+                document.getElementById('aiBudgetBox').innerHTML = `<strong>₹ ${savedBudget}</strong> - Optimized based on the selected Venue and Catering requirements.`;
+            }
+        });
+
+        // Save possibly edited budget before continuing
+        document.querySelector('.btn-continue-large').addEventListener('click', () => {
+            const budgetText = document.getElementById('aiBudgetBox').innerText;
+            const match = budgetText.match(/[\d,]+/); // Extracts digits and commas
+            if(match) {
+                localStorage.setItem('eventBudget', match[0]);
+            }
+        });
+    </script>
+</body>
+</html>
